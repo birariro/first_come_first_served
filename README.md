@@ -11,4 +11,6 @@
 
 - 48795473648c03db4b7250ce156bd6aed1f64609
   - 1개 발행 정상. 10개 멀티스레드 발행 데드락
-- 
+- 8fddf06e1a1f9458a5e965545cbbe4c5a6b59eec
+  - synchronized 10개 멀티 스레드 발행 성공
+  - event count 적합성 깨짐

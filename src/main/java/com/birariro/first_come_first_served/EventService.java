@@ -19,7 +19,7 @@ public class EventService {
 
   private final CouponRepository couponRepository;
   private final EventRepository eventRepository;
-  public synchronized String coupon(Long code) {
+  public String coupon(Long code) {
 
     Event event = eventRepository.findFirstByCode(code)
         .orElseThrow(() -> new IllegalArgumentException("not exist event code"));
