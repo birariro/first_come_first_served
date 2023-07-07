@@ -86,4 +86,34 @@ class EventControllerTest {
     System.out.println("멀티스레드 쿠폰 발행 종료");
   }
 
+  @Test
+  @DisplayName("멀티스레드 쿠폰 150개중 150개 발행")
+  public void multPublish150Test() throws Exception {
+
+    int count = 150;
+    createEvent(count);
+    multPublishWithUser(count);
+    System.out.println("멀티스레드 쿠폰 발행 종료");
+  }
+  @Test
+  @DisplayName("멀티스레드 쿠폰 500개중 500개 발행")
+  public void multPublish500Test() throws Exception {
+    int count = 500;
+    createEvent(count);
+    multPublishWithUser(count);
+    System.out.println("멀티스레드 쿠폰 발행 종료");
+  }
+
+  @Test
+  @DisplayName("멀티스레드 쿠폰 500개중 100회 5번 발행")
+  public void multPublish500to5Test() throws Exception {
+    int count = 500;
+    createEvent(count);
+    for (int i = 0; i < 5; i++) {
+      multPublishWithUser(100);
+    }
+
+    System.out.println("멀티스레드 쿠폰 발행 종료");
+  }
+
 }
