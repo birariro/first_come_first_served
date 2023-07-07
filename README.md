@@ -14,3 +14,7 @@
 - 8fddf06e1a1f9458a5e965545cbbe4c5a6b59eec
   - synchronized 10개 멀티 스레드 발행 성공
   - event count 적합성 깨짐
+- 23620f13b792a946c89b6644d429edd7b2d3892d
+  - 락 으로 변경
+  - 10개 멀티 스레드 발행 성공
+  - event count 적합성 해결

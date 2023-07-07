@@ -8,9 +8,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +27,11 @@ class EventControllerTest {
   @Autowired
   MockMvc mvc;
 
-  private final long couponCount = 10;
-  private final int userCount = 10;
-  @BeforeEach
-  public void createEventTest() throws Exception {
 
-    EventCreateRequest request = new EventCreateRequest(1001L, "시작 이벤트", couponCount);
+
+  public void createEvent(long count) throws Exception {
+
+    EventCreateRequest request = new EventCreateRequest(1001L, "시작 이벤트", count);
     String json = new ObjectMapper().writeValueAsString(request);
     mvc.perform(post("/event")
         .contentType(MediaType.APPLICATION_JSON)
@@ -43,23 +40,18 @@ class EventControllerTest {
 
   @Test
   @DisplayName("쿠폰 1개 발행")
-  @Order(1)
   public void publishTest() throws Exception {
-
+    createEvent(10);
     mvc.perform(get("/event/1001/coupon")
         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
   }
 
-  @Test
-  @Order(2)
-  @DisplayName("멀티스레드 쿠폰 10개 발행")
-  public void multPublishTest() throws InterruptedException {
+  public void multPublishWithUser(int count) throws InterruptedException {
 
-
-    ExecutorService executorService = Executors.newFixedThreadPool(userCount);
-    CountDownLatch countDownLatch = new CountDownLatch(userCount);
-    for (int i = 0; i < userCount; i++) {
+    ExecutorService executorService = Executors.newFixedThreadPool(count);
+    CountDownLatch countDownLatch = new CountDownLatch(count);
+    for (int i = 0; i < count; i++) {
       executorService.execute(() -> {
         try {
           mvc.perform(get("/event/1001/coupon")
@@ -76,4 +68,22 @@ class EventControllerTest {
     System.out.println("멀티스레드 쿠폰 발행 종료");
 
   }
+
+  @Test
+  @DisplayName("멀티스레드 쿠폰 10개중 10개 발행")
+  public void multPublish10Test() throws Exception {
+
+    createEvent(10);
+    multPublishWithUser(10);
+    System.out.println("멀티스레드 쿠폰 발행 종료");
+  }
+  @Test
+  @DisplayName("멀티스레드 쿠폰 100개중 100개 발행")
+  public void multPublish100Test() throws Exception {
+
+    createEvent(100);
+    multPublishWithUser(100);
+    System.out.println("멀티스레드 쿠폰 발행 종료");
+  }
+
 }
