@@ -1,4 +1,4 @@
-package com.birariro.first_come_first_served;
+package com.birariro.first_come_first_served.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

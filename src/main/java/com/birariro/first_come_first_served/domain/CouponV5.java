@@ -13,12 +13,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "tb_coupon")
+@Table(name = "tb_coupon_v5")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Coupon {
+@Getter
+public class CouponV5 implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,13 +30,18 @@ public class Coupon {
 
   @JoinColumn(name = "event_id")
   @ManyToOne(fetch = FetchType.LAZY)
-  private Event event;
+  private EventV5 event;
+  private String active;
 
-  public Coupon(String code) {
+  public CouponV5(String code) {
     this.code = code;
+    this.active = "WAIT";
+  }
+  public void active(){
+    this.active = "PUBLISHED";
   }
 
-  public void publish(Event event){
+  public void publish(EventV5 event){
     this.event = event;
   }
 }

@@ -11,3 +11,9 @@ services:
       MYSQL_ROOT_PASSWORD: "0000"
       MYSQL_DATABASE: "fcfs_db"
     command: [ 'mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci' ]
+
+  redis:
+    container_name: fcfs-redis
+    image: redis:7.0.4
+    ports:
+      - "12889:6379"

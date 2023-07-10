@@ -1,4 +1,4 @@
-package com.birariro.first_come_first_served;
+package com.birariro.first_come_first_served.config;
 
 import com.p6spy.engine.logging.Category;
 import com.p6spy.engine.spy.P6SpyOptions;
@@ -20,9 +20,13 @@ public class P6SpySqlFormatter implements MessageFormattingStrategy {
     @Override
     public String formatMessage(int connectionId, String now, long elapsed, String category, String prepared, String sql, String url) {
         sql = formatSql(category, sql);
-        return String.format("[%s] | %d ms | %s", category, elapsed, formatSql(category, sql));
+
+        String format = String.format("connection: [%2s] | action: [%9s] | time: [%d ms]  %s", connectionId, category, elapsed, formatSql(category, sql));
+        return highlight(format);
     }
- 
+    private String highlight(String sql) {
+        return FormatStyle.HIGHLIGHT.getFormatter().format(sql);
+    }
     private String formatSql(String category, String sql) {
         if (sql != null && !sql.trim().isEmpty() && Category.STATEMENT.getName().equals(category)) {
             String trimmedSQL = sql.trim().toLowerCase(Locale.ROOT);
