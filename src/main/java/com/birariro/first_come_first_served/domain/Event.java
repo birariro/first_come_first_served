@@ -41,15 +41,17 @@ public class Event {
   }
 
   public void publishCoupon(Coupon coupon){
-    if(! this.isPublishCoupon()) {
-      throw new IllegalStateException("not coupon count");
-    }
+    this.isPublishCoupon();
     this.count = this.count - 1;
     this.coupons.add(coupon);
     coupon.publish(this);
   }
 
-  public boolean isPublishCoupon(){
-    return this.count > 0;
+  public void test(){
+    this.isPublishCoupon();
+    this.count = this.count - 1;
+  }
+  public void isPublishCoupon(){
+    if(this.count <= 0)  throw new IllegalStateException("not coupon count");
   }
 }

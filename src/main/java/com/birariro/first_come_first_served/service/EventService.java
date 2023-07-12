@@ -4,7 +4,6 @@ package com.birariro.first_come_first_served.service;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,19 +33,19 @@ public class EventService {
   private final EventV5Repository eventV5Repository;
   private final RedisTemplate<Long,String> redisTemplate;
 
-  public void createEvent(Long code, String name, Long count){
+  public void event(Long code, String name, Long count){
     Event event = new Event(code, name, count);
     eventRepository.save(event);
   }
 
   /**
-   * 2개 이상 스레드 부터 데드락.
+   * FK 공유 락으로 인한 데드락
    */
   public String couponV1(Long code){
-    Event event = eventV1Repository.findFirstByCode(code)
+    Event event = eventRepository.findFirstByCode(code)
         .orElseThrow(() -> new IllegalArgumentException("not exist event code"));
 
-    if(!event.isPublishCoupon()) throw new IllegalStateException("expiration coupon");
+    event.isPublishCoupon();
 
     String couponCode = Random.code();
     Coupon coupon = new Coupon(couponCode);
@@ -55,15 +54,16 @@ public class EventService {
 
     return couponCode;
   }
+
 
   /**
    * 정합성이 깨짐
    */
   public synchronized String couponV2(Long code){
-    Event event = eventV1Repository.findFirstByCode(code)
+    Event event = eventRepository.findFirstByCode(code)
         .orElseThrow(() -> new IllegalArgumentException("not exist event code"));
 
-    if(!event.isPublishCoupon()) throw new IllegalStateException("expiration coupon");
+    event.isPublishCoupon();
 
     String couponCode = Random.code();
     Coupon coupon = new Coupon(couponCode);
@@ -74,29 +74,25 @@ public class EventService {
   }
 
   /**
-   * 정합성 보장.
-   * hikari connection 이상 요청시 time out
-   * @param code
-   * @return
+   * 비관적 락을 통한
+   * 정상 동작
    */
   public String couponV3(Long code) {
 
-    Event event = eventRepository.findFirstByCode(code)
+    Event event = eventV1Repository.findFirstByCode(code)
         .orElseThrow(() -> new IllegalArgumentException("not exist event code"));
 
-    if(!event.isPublishCoupon()) throw new IllegalStateException("expiration coupon");
+    event.isPublishCoupon();
 
     String couponCode = Random.code();
     Coupon coupon = new Coupon(couponCode);
     event.publishCoupon(coupon);
     couponRepository.save(coupon);
-
     return couponCode;
   }
 
   /**
    * redis 를 사용하여 숫자값을 증가하면서 넘겨줌
-   * 정합성, 500개 동시 요청 완료
    * 하지만 이값은 대기표와 같은 값이라 쿠폰번호로 사용할수없음
    */
   public String couponV4(Long code) {
@@ -124,7 +120,7 @@ public class EventService {
    * 이벤트 생성시 쿠폰을 미리 만들어두고
    * 만들어진 이벤트 코드와 쿠폰 번호를 redis 큐 에 저장한다.
    */
-  public void createEventV5(Long code, String name, Long count){
+  public void eventV5(Long code, String name, Long count){
     EventV5 event = new EventV5(code, name, count);
     eventV5Repository.save(event);
 
@@ -140,3 +136,5 @@ public class EventService {
   }
 
 }
+
+

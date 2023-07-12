@@ -41,12 +41,12 @@ public class EventController {
 
   @PostMapping("/event")
   public ResponseEntity createEvent(@RequestBody EventCreateRequest eventCreateRequest){
-    eventService.createEvent(eventCreateRequest.getCode(),eventCreateRequest.getName(),eventCreateRequest.getCount());
+    eventService.event(eventCreateRequest.getCode(),eventCreateRequest.getName(),eventCreateRequest.getCount());
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
   @PostMapping("/event/v5")
   public ResponseEntity createEventV5(@RequestBody EventCreateRequest eventCreateRequest){
-    eventService.createEventV5(eventCreateRequest.getCode(),eventCreateRequest.getName(),eventCreateRequest.getCount());
+    eventService.eventV5(eventCreateRequest.getCode(),eventCreateRequest.getName(),eventCreateRequest.getCount());
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 }
