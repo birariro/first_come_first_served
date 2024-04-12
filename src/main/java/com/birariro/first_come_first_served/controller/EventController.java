@@ -1,5 +1,6 @@
 package com.birariro.first_come_first_served.controller;
 
+import com.birariro.first_come_first_served.service.Event4Service;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class EventController {
 
   private final EventService eventService;
+  private final Event4Service event4Service;
 
   @GetMapping("/event/v1/{code}/coupon")
   public ResponseEntity getCouponV1(@PathVariable Long code){
@@ -30,23 +32,17 @@ public class EventController {
   public ResponseEntity getCouponV3(@PathVariable Long code){
     return ResponseEntity.ok().body(eventService.couponV3(code));
   }
+
   @GetMapping("/event/v4/{code}/coupon")
-  public ResponseEntity getCouponV4(@PathVariable Long code){
-    return ResponseEntity.ok().body(eventService.couponV4(code));
+  public ResponseEntity getCouponV4(@PathVariable Long code) throws InterruptedException {
+    return ResponseEntity.ok().body(event4Service.couponV4(code));
   }
-  @GetMapping("/event/v5/{code}/coupon")
-  public ResponseEntity getCouponV5(@PathVariable Long code){
-    return ResponseEntity.ok().body(eventService.couponV5(code));
-  }
+
 
   @PostMapping("/event")
   public ResponseEntity createEvent(@RequestBody EventCreateRequest eventCreateRequest){
     eventService.event(eventCreateRequest.getCode(),eventCreateRequest.getName(),eventCreateRequest.getCount());
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
-  @PostMapping("/event/v5")
-  public ResponseEntity createEventV5(@RequestBody EventCreateRequest eventCreateRequest){
-    eventService.eventV5(eventCreateRequest.getCode(),eventCreateRequest.getName(),eventCreateRequest.getCount());
-    return ResponseEntity.status(HttpStatus.CREATED).build();
-  }
+
 }

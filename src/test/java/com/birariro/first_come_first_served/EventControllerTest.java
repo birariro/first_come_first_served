@@ -34,7 +34,7 @@ class EventControllerTest {
   MockMvc mvc;
 
 
-  private String couponTemplate = "/event/v1/1001/coupon";
+  private String couponTemplate = "/event/v31/1001/coupon";
   private String eventTemplate = "/event";
 
   public void createEvent(long count) throws Exception {
@@ -186,13 +186,6 @@ class EventControllerTest {
     int count = 10000;
     createEvent(count);
     multPublish(count);
-  }
-
-
-  @Test
-  public void multPublish10000TestTEst() throws Exception {
-    int count = 50000;
-    createEvent(count);
   }
 
 
